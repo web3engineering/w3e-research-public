@@ -1,0 +1,22 @@
+[project]
+name = "w3e-research"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "streamlit>=1.40.0",
+    "clickhouse-connect>=0.7.0",
+    "pandas>=2.0.0",
+    "plotly>=6.5.2",
+]
+
+[tool.uv]
+package = true
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/apps", "src/core"]
