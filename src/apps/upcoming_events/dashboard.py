@@ -123,7 +123,7 @@ def main():
             st.markdown("---")
             st.markdown(
                 "<small>Data provided by "
-                "[PredictionLabs.ch](https://predictionlabs.ch)</small>",
+                "[PredictionLabs.ch](https://predictionlabs.ch), [Source Code](https://github.com/web3engineering/w3e-research-public/tree/master/src/apps/upcoming_events)</small>",
                 unsafe_allow_html=True
             )
 
