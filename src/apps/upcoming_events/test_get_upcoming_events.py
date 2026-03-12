@@ -57,7 +57,7 @@ def test_get_upcoming_events():
         print(f"✓ Successfully fetched {len(df)} events")
         print("\nColumns:", list(df.columns))
         print("\nFirst 3 events:")
-        print(df[['question', 'end_date', 'volume_24hr', 'time_to_expire_seconds']].head(3))
+        print(df[['question', 'market_end_dttm', 'volume_24hr', 'time_to_expire_seconds']].head(3))
 
         # Apply formatting
         print("\nFormatted output:")
@@ -65,7 +65,7 @@ def test_get_upcoming_events():
             print(f"\n{idx + 1}. {row['question']}")
             print(f"   Time to expire: {format_time_to_expire(row['time_to_expire_seconds'])}")
             print(f"   Volume 24h: {format_volume(row['volume_24hr'])}")
-            print(f"   End date: {row['end_date']}")
+            print(f"   End date: {row['market_end_dttm']}")
 
     except Exception as e:
         print(f"✗ Error: {e}")

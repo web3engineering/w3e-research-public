@@ -83,7 +83,7 @@ def main():
                 'Image': df['twitter_card_image'],
                 'Question': df['question'],
                 'Time to Expire': df['time_remaining'],
-                'End Date': df['end_date'].dt.strftime('%Y-%m-%d %H:%M UTC'),
+                'End Date': df['market_end_dttm'].dt.strftime('%Y-%m-%d %H:%M UTC'),
                 'Volume 24h': df['volume_formatted'],
             })
 

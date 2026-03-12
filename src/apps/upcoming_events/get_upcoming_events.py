@@ -15,39 +15,38 @@ def get_upcoming_events(limit: int = 100) -> pd.DataFrame:
         limit: Maximum number of events to return (default: 100)
 
     Returns:
-        DataFrame with columns: id, question, end_date, volume_24hr,
+        DataFrame with columns: market_id, question, market_end_dttm, volume_24hr,
         twitter_card_image, clob_token_id, time_to_expire_seconds
     """
     query = f"""
-    WITH latest_meta AS (
+    SELECT
+        t.market_id,
+        t.question,
+        t.market_end_dttm,
+        t.volume_24hr,
+        t.twitter_card_image,
+        dateDiff('second', now(), t.market_end_dttm) as time_to_expire_seconds
+    FROM (
         SELECT
-            id,
-            question,
-            end_date,
-            volume_24hr,
-            twitter_card_image,
-            clob_token_id,
-            inserted_at,
+            m.market_id,
+            m.question,
+            m.market_end_dttm,
+            m.volume_24hr,
+            m.twitter_card_image,
+            m.clob_token_id,
+            m.inserted_at,
             ROW_NUMBER() OVER (
-                PARTITION BY id
-                ORDER BY inserted_at DESC, clob_token_id DESC
+                PARTITION BY m.market_id
+                ORDER BY m.inserted_at DESC, m.clob_token_id DESC
             ) as rn
-        FROM polymarket.raw_market_meta
+        FROM polymarket.raw_market_meta AS m
         WHERE
-            active = TRUE
-            AND end_date IS NOT NULL
-            AND end_date > now()
-    )
-    SELECT DISTINCT
-        id,
-        question,
-        end_date,
-        volume_24hr,
-        twitter_card_image,
-        dateDiff('second', now(), end_date) as time_to_expire_seconds
-    FROM latest_meta
-    WHERE rn = 1
-    ORDER BY end_date ASC
+            m.is_active = TRUE
+            AND m.market_end_dttm IS NOT NULL
+            AND m.market_end_dttm > now()
+    ) t
+    WHERE t.rn = 1
+    ORDER BY t.market_end_dttm ASC
     LIMIT {limit}
     """
 
