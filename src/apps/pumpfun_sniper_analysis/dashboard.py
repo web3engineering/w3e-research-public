@@ -172,7 +172,8 @@ def main():
                         data=csv,
                         file_name=f"snipe_{snipe['token_mint'][:8]}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
                         mime="text/csv",
-                        use_container_width=True
+                        use_container_width=True,
+                        key=f"download_snipe_{idx}"
                     )
                 else:
                     st.warning("No trades found in snipe window.")
