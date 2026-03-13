@@ -116,7 +116,7 @@ def main():
                     st.markdown("**Token Information**")
                     st.text(f"Mint: {snipe['token_mint']}")
                     st.text(f"Created: {snipe['creation_time']}")
-                    st.text(f"Creation Slot: {snipe['creation_slot']}")
+                    st.text(f"Creation Slot: {snipe['creation_slot']} (Tx: {snipe['creation_tx_idx']})")
                 with col2:
                     st.markdown("**User Buy Information**")
                     st.text(f"Buy Time: {snipe['user_buy_time']}")
@@ -143,8 +143,7 @@ def main():
                         'Quote Amount': trades_df['quote_coin_amount'],
                         'Gas Fee (SOL)': trades_df['gas_fee'].apply(format_sol),
                         'Gas Units': trades_df['consumed_gas'],
-                        'Tip Accounts': trades_df['tip_accounts'],
-                        'Tip Amounts (SOL)': trades_df['tip_amounts'],
+                        'Tips': trades_df['tips'],
                     })
 
                     # Display with custom column config
@@ -162,8 +161,7 @@ def main():
                             'Quote Amount': st.column_config.NumberColumn('Quote Amount', format='%.2f'),
                             'Gas Fee (SOL)': st.column_config.TextColumn('Gas Fee (SOL)', width='small'),
                             'Gas Units': st.column_config.NumberColumn('Gas Units', format='%d'),
-                            'Tip Accounts': st.column_config.TextColumn('Tip Accounts', width='medium'),
-                            'Tip Amounts (SOL)': st.column_config.TextColumn('Tip Amounts (SOL)', width='small'),
+                            'Tips': st.column_config.TextColumn('Tips (account:lamports)', width='medium'),
                         }
                     )
 

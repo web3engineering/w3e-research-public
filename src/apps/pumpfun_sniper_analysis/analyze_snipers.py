@@ -181,7 +181,13 @@ def parse_tip_data(transfers_json: str) -> List[Dict]:
         # Identify tips: transfers < 0.01 SOL (< 10,000,000 lamports)
         tips = []
         for transfer in transfers:
-            amount_lamports = transfer.get('amount', 0)
+            # The field is called 'lamports' and it's a string, so convert to int
+            amount_lamports_str = transfer.get('lamports', '0')
+            try:
+                amount_lamports = int(amount_lamports_str)
+            except (ValueError, TypeError):
+                continue
+
             if 0 < amount_lamports < 10_000_000:  # Between 0 and 0.01 SOL
                 tips.append({
                     'to': transfer.get('to', 'unknown'),
@@ -194,7 +200,7 @@ def parse_tip_data(transfers_json: str) -> List[Dict]:
         return []
 
 
-def format_tips_for_display(tips: List[Dict]) -> Tuple[str, str]:
+def format_tips_for_display(tips: List[Dict]) -> str:
     """
     Format tip data for display in DataFrame.
 
@@ -202,15 +208,13 @@ def format_tips_for_display(tips: List[Dict]) -> Tuple[str, str]:
         tips: List of tip dictionaries
 
     Returns:
-        Tuple of (tip_accounts_str, tip_amounts_str)
+        Combined string in format "account:amount,account:amount"
     """
     if not tips:
-        return '', ''
+        return ''
 
-    accounts = ', '.join([tip['to'][:8] + '...' for tip in tips])
-    amounts = ', '.join([f"{tip['amount_sol']:.6f}" for tip in tips])
-
-    return accounts, amounts
+    formatted_tips = [f"{tip['to'][:8]}...:{tip['amount_lamports']}" for tip in tips]
+    return ','.join(formatted_tips)
 
 
 def analyze_wallet_sniping(wallet: str, limit: int = 10) -> Dict:
@@ -273,14 +277,15 @@ def analyze_wallet_sniping(wallet: str, limit: int = 10) -> Dict:
 
             # Parse tips for each trade
             if not window_trades.empty:
-                window_trades[['tip_accounts', 'tip_amounts']] = window_trades['top_level_transfers_json'].apply(
-                    lambda x: pd.Series(format_tips_for_display(parse_tip_data(x)))
+                window_trades['tips'] = window_trades['top_level_transfers_json'].apply(
+                    lambda x: format_tips_for_display(parse_tip_data(x))
                 )
 
             snipe_details.append({
                 'token_mint': token_mint,
                 'creation_time': creation['creation_time'],
                 'creation_slot': creation_slot,
+                'creation_tx_idx': creation['creation_tx_idx'],
                 'user_buy_time': buy['buy_time'],
                 'user_buy_slot': buy_slot,
                 'slots_after_creation': slots_after,

@@ -46,11 +46,11 @@ def test_parse_tip_data():
     """Test tip parsing from JSON."""
     print("Testing parse_tip_data()...")
 
-    # Test case 1: Valid tips
+    # Test case 1: Valid tips (lamports as strings, matching real data)
     transfers_json1 = json.dumps([
-        {"to": "TipAccount1", "amount": 5000000},  # 0.005 SOL (tip)
-        {"to": "TipAccount2", "amount": 1000000},  # 0.001 SOL (tip)
-        {"to": "LargeTransfer", "amount": 50000000},  # 0.05 SOL (not a tip)
+        {"to": "TipAccount1", "lamports": "5000000"},  # 0.005 SOL (tip)
+        {"to": "TipAccount2", "lamports": "1000000"},  # 0.001 SOL (tip)
+        {"to": "LargeTransfer", "lamports": "50000000"},  # 0.05 SOL (not a tip)
     ])
     tips1 = parse_tip_data(transfers_json1)
     print(f"  Test 1 - Valid tips: {len(tips1)} tips found")
@@ -59,7 +59,7 @@ def test_parse_tip_data():
 
     # Test case 2: No tips
     transfers_json2 = json.dumps([
-        {"to": "Account1", "amount": 100000000},  # 0.1 SOL (not a tip)
+        {"to": "Account1", "lamports": "100000000"},  # 0.1 SOL (not a tip)
     ])
     tips2 = parse_tip_data(transfers_json2)
     print(f"  Test 2 - No tips: {len(tips2)} tips found")
@@ -84,16 +84,14 @@ def test_format_tips_for_display():
         {"to": "TipAccount123456", "amount_lamports": 5000000, "amount_sol": 0.005},
         {"to": "TipAccount789012", "amount_lamports": 1000000, "amount_sol": 0.001},
     ]
-    accounts1, amounts1 = format_tips_for_display(tips1)
+    result1 = format_tips_for_display(tips1)
     print(f"  Test 1 - Multiple tips:")
-    print(f"    Accounts: {accounts1}")
-    print(f"    Amounts: {amounts1}")
+    print(f"    Result: {result1}")
 
     # Test case 2: No tips
-    accounts2, amounts2 = format_tips_for_display([])
+    result2 = format_tips_for_display([])
     print(f"  Test 2 - No tips:")
-    print(f"    Accounts: '{accounts2}' (should be empty)")
-    print(f"    Amounts: '{amounts2}' (should be empty)")
+    print(f"    Result: '{result2}' (should be empty)")
 
     print()
 
